@@ -390,6 +390,72 @@ describe('api visits route', () => {
 			})
 	})
 
+	test('/start checks that isRedAlertEnabled is being returned from api', () => {
+		expect.assertions(4)
+		// resolve ltiLaunch lookup
+		const launch = {
+			reqVars: {
+				lis_outcome_service_url: 'howtune.com'
+			}
+		}
+		ltiUtil.retrieveLtiLaunch.mockResolvedValueOnce(launch)
+
+		// resolve viewerState.get
+		viewerState.get.mockResolvedValueOnce('view state')
+
+		mockCurrentUser = { id: 99 }
+		mockCurrentDocument = {
+			draftId: validUUID(),
+			yell: jest.fn().mockResolvedValueOnce({ document: 'mock-document' }),
+			contentId: validUUID()
+		}
+		return request(app)
+			.post('/api/start')
+			.send({ visitId: validUUID() })
+			.then(response => {
+				expect(response.header['content-type']).toContain('application/json')
+				expect(response.statusCode).toBe(200)
+				// expect(response.body).toBe('banana')
+				expect(response.body.value).toHaveProperty('isRedAlertEnabled')
+				expect(mockCurrentDocument.yell).toHaveBeenCalledTimes(1)
+			})
+	})
+
+	test('/start checks that isRedAlertEnabled is true', () => {
+		expect.assertions(5)
+		// resolve ltiLaunch lookup
+		const launch = {
+			reqVars: {
+				lis_outcome_service_url: 'howtune.com'
+			}
+		}
+		ltiUtil.retrieveLtiLaunch.mockResolvedValueOnce(launch)
+
+		// resolve viewerState.get
+		viewerState.get.mockResolvedValueOnce('view state')
+
+		// mock return value on select from red_alert_status
+		db.oneOrNone.mockReturnValue({ is_enabled: true })
+
+		mockCurrentUser = { id: 99 }
+		mockCurrentDocument = {
+			draftId: validUUID(),
+			yell: jest.fn().mockResolvedValueOnce({ document: 'mock-document' }),
+			contentId: validUUID()
+		}
+		return request(app)
+			.post('/api/start')
+			.send({ visitId: validUUID() })
+			.then(response => {
+				expect(response.header['content-type']).toContain('application/json')
+				expect(response.statusCode).toBe(200)
+				// expect(response.body).toBe('banana')
+				expect(response.body.value).toHaveProperty('isRedAlertEnabled')
+				expect(response.body.value.isRedAlertEnabled).toBe(true)
+				expect(mockCurrentDocument.yell).toHaveBeenCalledTimes(1)
+			})
+	})
+
 	test('visit:start event and createViewerSessionLoggedInEvent created', () => {
 		expect.assertions(4)
 		// resolve ltiLaunch lookup

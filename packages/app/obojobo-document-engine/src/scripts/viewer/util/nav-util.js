@@ -31,6 +31,16 @@ const NavUtil = {
 		})
 	},
 
+	setRedAlert(redAlert) {
+		return Dispatcher.trigger('nav:redAlert', {
+			value: {
+				redAlert
+				// same as:
+				// redAlert: redAlert
+			}
+		})
+	},
+
 	gotoPath(path) {
 		return Dispatcher.trigger('nav:gotoPath', {
 			value: {
@@ -251,6 +261,10 @@ const NavUtil = {
 
 	isNavOpen(state) {
 		return state.open
+	},
+
+	isRedAlertEnabled(state) {
+		return state.redAlert
 	}
 }
 

@@ -500,6 +500,44 @@ describe('NavStore', () => {
 		expect(NavUtil.setFlag.mock.calls[0]).toMatchSnapshot()
 	})
 
+	test('nav:redAlert sends post event, red alert being true', () => {
+		NavStore.setState({
+			draftId: 'mockDraftId',
+			visitId: 'mockVisitId',
+			redAlert: true
+		})
+		// simulate trigger
+		Dispatcher.trigger.mockReturnValueOnce()
+
+		// go
+		eventCallbacks['nav:redAlert']({ value: { redAlert: true } })
+
+		expect(Dispatcher.trigger).toHaveBeenCalledTimes(1)
+		expect(Dispatcher.trigger.mock.calls[0]).toMatchSnapshot()
+		expect(APIUtil.postEvent).toHaveBeenCalledTimes(1)
+		expect(APIUtil.postEvent.mock.calls[0]).toMatchSnapshot()
+		expect(NavStore.getState()).toMatchSnapshot()
+	})
+
+	test('nav:redAlert sends post event, red alert being false', () => {
+		NavStore.setState({
+			draftId: 'mockDraftId',
+			visitId: 'mockVisitId',
+			redAlert: false
+		})
+		// simulate trigger
+		Dispatcher.trigger.mockReturnValueOnce()
+
+		// go
+		eventCallbacks['nav:redAlert']({ value: { redAlert: false } })
+
+		expect(Dispatcher.trigger).toHaveBeenCalledTimes(1)
+		expect(Dispatcher.trigger.mock.calls[0]).toMatchSnapshot()
+		expect(APIUtil.postEvent).toHaveBeenCalledTimes(1)
+		expect(APIUtil.postEvent.mock.calls[0]).toMatchSnapshot()
+		expect(NavStore.getState()).toMatchSnapshot()
+	})
+
 	test('question:scoreSet sets flag with a score of 100', () => {
 		NavStore.setState({ itemsById: { mockID: { showChildren: 'unchanged' } } })
 		// simulate trigger
@@ -548,6 +586,32 @@ describe('NavStore', () => {
 		NavUtil.getFirst.mockReturnValueOnce(undefined) //eslint-disable-line
 		NavStore.init('mockDraftId', null, null, 'startingpath', 11)
 		expect(NavUtil.goto).not.toHaveBeenCalledWith()
+	})
+
+	test('init stores redAlert value in the state', () => {
+		NavStore.init('mockDraftId', null, 12, '', 11, {}, true)
+		expect(NavStore.getState()).toHaveProperty('redAlert', true)
+
+		NavStore.init('mockDraftId', null, 12, '', 11, {})
+		expect(NavStore.getState()).toHaveProperty('redAlert', false)
+		/*
+		expect(NavStore.getState()).toMatchInlineSnapshot(`
+		Object {
+		  "context": "practice",
+		  "draftId": "mockDraftId",
+		  "items": Object {},
+		  "itemsByFullPath": Object {},
+		  "itemsById": Object {},
+		  "itemsByPath": Object {},
+		  "locked": false,
+		  "navTargetHistory": Array [],
+		  "navTargetId": null,
+		  "open": true,
+		  "redAlert": true,
+		  "visitId": 11,
+		}
+	`)
+	*/
 	})
 
 	test('buildMenu should reset menu items', () => {

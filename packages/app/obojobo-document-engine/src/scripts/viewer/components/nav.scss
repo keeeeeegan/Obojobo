@@ -4,6 +4,7 @@
 	$color-nav-bg: #fbfbfb;
 	$color-nav-highlight: $color-obojobo-blue;
 	$color-nav-hover: darken($color-highlight, 25%);
+	$color-nav-red-alert: red;
 	$padding: 2rem;
 
 	position: fixed;
@@ -164,6 +165,11 @@
 			background: $color-nav-highlight;
 			border: none;
 		}
+	}
+
+	&.is-red-alert {
+		transition: background 2s;
+		background: $color-nav-red-alert;
 	}
 
 	.link {

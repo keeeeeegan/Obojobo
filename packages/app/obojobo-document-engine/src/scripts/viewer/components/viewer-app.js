@@ -118,6 +118,7 @@ export default class ViewerApp extends React.Component {
 		let attemptHistory
 		let viewState
 		let isPreviewing
+		let isRedAlertEnabled
 		let outcomeServiceURL = 'the external system'
 		let viewSessionId
 
@@ -136,6 +137,7 @@ export default class ViewerApp extends React.Component {
 				viewState = visit.value.viewState
 				attemptHistory = visit.value.extensions[':ObojoboDraft.Sections.Assessment:attemptHistory']
 				isPreviewing = visit.value.isPreviewing
+				isRedAlertEnabled = visit.value.isRedAlertEnabled
 				outcomeServiceURL = visit.value.lti.lisOutcomeServiceUrl
 
 				return APIUtil.getDraft(this.props.draftId)
@@ -149,7 +151,8 @@ export default class ViewerApp extends React.Component {
 					model.modelState.start,
 					window.location.pathname,
 					visitIdFromApi,
-					viewState
+					viewState,
+					isRedAlertEnabled
 				)
 				AssessmentStore.init(attemptHistory)
 

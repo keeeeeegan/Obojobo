@@ -53,6 +53,7 @@ jest.mock('../../../src/scripts/viewer/util/nav-util', () => ({
 	toggle: jest.fn(),
 	getOrderedList: jest.fn(),
 	getNavTarget: jest.fn(),
+	setRedAlert: jest.fn(),
 	close: jest.fn(),
 	open: jest.fn()
 }))
@@ -250,6 +251,38 @@ describe('Nav', () => {
 		el.find('li').simulate('click')
 		expect(FocusUtil.focusComponent).toHaveBeenCalledTimes(1)
 		expect(FocusUtil.focusComponent).toHaveBeenCalledWith(5, { animateScroll: true })
+	})
+
+	test('test that onRedAlertClick was called by clicking red alert button', () => {
+		NavUtil.getOrderedList.mockReturnValueOnce([])
+
+		const props = {
+			navState: {
+				open: false,
+				locked: true,
+				redAlert: false
+			}
+		}
+		const el = shallow(<Nav {...props} />)
+		el.find('.red-alert').simulate('click')
+		expect(NavUtil.setRedAlert).toHaveBeenCalledWith(true)
+		expect(NavUtil.setRedAlert).toHaveBeenCalledTimes(1)
+	})
+
+	test('test that clicking red alert button causes red alert mode to be set to false', () => {
+		NavUtil.getOrderedList.mockReturnValueOnce([])
+
+		const props = {
+			navState: {
+				open: false,
+				locked: true,
+				redAlert: true
+			}
+		}
+		const el = shallow(<Nav {...props} />)
+		el.find('.red-alert').simulate('click')
+		expect(NavUtil.setRedAlert).toHaveBeenCalledWith(false)
+		expect(NavUtil.setRedAlert).toHaveBeenCalledTimes(1)
 	})
 
 	test('onClickSkipNavigation calls FocusUtil.focusOnNavTarget', () => {

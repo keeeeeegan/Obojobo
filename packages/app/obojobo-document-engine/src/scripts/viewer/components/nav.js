@@ -24,6 +24,7 @@ export default class Nav extends React.Component {
 		this.selfRef = React.createRef()
 		this.hideOrShowOnResize = this.hideOrShowOnResize.bind(this)
 		this.closeNavOnMobile = this.closeNavOnMobile.bind(this)
+		this.onRedAlertClick = this.onRedAlertClick.bind(this)
 	}
 
 	isMobileSize() {
@@ -96,6 +97,11 @@ export default class Nav extends React.Component {
 				break
 			}
 		}
+	}
+
+	// set the red alert on the nav
+	onRedAlertClick() {
+		NavUtil.setRedAlert(!this.props.navState.redAlert)
 	}
 
 	focus() {
@@ -194,11 +200,16 @@ export default class Nav extends React.Component {
 		const list = NavUtil.getOrderedList(navState)
 		const lockEl = this.getLockEl(navState.locked)
 		const isNavInaccessible = navState.disabled || !navState.open
+		const isRedAlert = navState.redAlert
+
 		const className =
 			'viewer--components--nav' +
 			isOrNot(navState.locked, 'locked') +
 			isOrNot(navState.open, 'open') +
-			isOrNot(!navState.disabled, 'enabled')
+			isOrNot(!navState.disabled, 'enabled') +
+			isOrNot(isRedAlert, 'red-alert')
+
+		const redAlertButtonText = isRedAlert ? '🚨 Red Alert' : 'Red Alert'
 
 		return (
 			<nav
@@ -216,6 +227,15 @@ export default class Nav extends React.Component {
 					aria-hidden={isNavInaccessible}
 				>
 					Skip Navigation
+				</Button>
+				<Button
+					altAction
+					className="red-alert"
+					disabled={isNavInaccessible}
+					onClick={this.onRedAlertClick}
+					aria-hidden={isNavInaccessible}
+				>
+					{redAlertButtonText}
 				</Button>
 				<button className="toggle-button" onClick={NavUtil.toggle}>
 					Toggle Navigation Menu

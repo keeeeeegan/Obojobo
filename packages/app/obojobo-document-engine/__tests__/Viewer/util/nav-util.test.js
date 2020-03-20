@@ -78,6 +78,35 @@ describe('NavUtil', () => {
 		expect(x).toBe('mockTriggerReturn')
 	})
 
+	test('setRedAlert', () => {
+		expect(Common.flux.Dispatcher.trigger).not.toHaveBeenCalled()
+		const x = NavUtil.setRedAlert('mockRedAlert')
+		const expectedValue = { value: { redAlert: 'mockRedAlert' } }
+		expect(Common.flux.Dispatcher.trigger).toHaveBeenCalledWith('nav:redAlert', expectedValue)
+		expect(x).toBe('mockTriggerReturn')
+	})
+
+	// this one and the next one do the same thing, but the object version is more rigourous
+	test('isRedAlertEnabled', () => {
+		const state = { redAlert: 'enabled' }
+		const x = NavUtil.isRedAlertEnabled(state)
+		expect(x).toBe('enabled')
+	})
+
+	test('isRedAlertEnabled', () => {
+		const testObj = {}
+		const state = { redAlert: testObj }
+		const x = NavUtil.isRedAlertEnabled(state)
+		expect(x).toBe(testObj)
+	})
+
+	// toBe uses === for comparison, toEqual uses ==
+	test('isRedAlertEnabled', () => {
+		const state = { redAlert: {} }
+		const x = NavUtil.isRedAlertEnabled(state)
+		expect(x).toEqual({})
+	})
+
 	test('setFlag', () => {
 		expect(Common.flux.Dispatcher.trigger).not.toHaveBeenCalled()
 		const x = NavUtil.setFlag('mockId', 'mockFlagName', 'mockFlagValue')
